@@ -1,0 +1,38 @@
+#!/bin/bash
+#SBATCH --job-name=extracting_eqtl
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
+#SBATCH --time=10:00:00
+#SBATCH --output=logs/smr_%A_%a.out
+
+mkdir -p eqtlgen
+
+tail -n +2 ST3_with_gene_names.tsv | while IFS=$'\t' read RSID chr pos start end gene_symbol gene_id; do
+
+  window=500000   # 500 kb
+
+  start_bp=$((pos - window))
+  end_bp=$((pos + window))
+
+  # Prevent negative coordinates
+  if [ "$start_bp" -lt 0 ]; then
+    start_bp=0
+  fi
+
+  from_kb=$((start_bp / 1000))
+  to_kb=$((end_bp / 1000))
+
+  smr \
+    --beqtl-summary cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense \
+    --query 1 \
+    --snp-chr $chr \
+    --from-snp-kb $from_kb \
+    --to-snp-kb $to_kb \
+    --gene $gene_id \
+    --out eqtlgen/eqtl_${RSID}_${gene_id}
+
+done
+
+
+
+
