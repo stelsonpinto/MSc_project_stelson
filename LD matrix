@@ -1,0 +1,43 @@
+mkdir -p LD_matrix_prep
+mkdir -p chr_data
+mkdir -p LD_matrix
+Module load plink2
+
+# Step 1: create chromosome datasets
+awk 'NR>1 {print $2}' ST3_with_gene_names.tsv | sort -u | while read chr; do
+
+  plink2 \
+    --pfile all_hg38_EUR_ref_nodup vzs \
+    --chr ${chr} \
+    --allow-extra-chr \
+    --make-pgen vzs \
+    --out chr_data/all_hg38_chr${chr}_EUR_ref_nodup
+
+done
+
+
+# Step 2: run per locus
+awk 'NR>1 {print $1, $2, $7}' ST3_with_gene_names.tsv | while read rsid chr gene; do
+
+  prefix=${rsid}_${gene}
+
+if [[ -f LD_ref_data/${prefix}_snps.txt && -f LD_ref_data/${prefix}_alleles.txt ]]; then
+  ...
+else
+  echo "Skipping ${prefix} (missing files)"
+fi
+
+  plink2 \
+    --pfile chr_data/all_hg38_chr${chr}_EUR_ref_nodup vzs \
+    --extract LD_ref_data/${prefix}_snps.txt \
+    --ref-allele force LD_ref_data/${prefix}_alleles.txt 2 1 \
+    --make-pgen vzs \
+    --out LD_matrix_prep/${prefix}_aligned
+
+done
+
+./plink2 \
+  --pfile LD_matrix_prep/${prefix}_aligned vzs \
+  --maf 0.02 \
+  --r-unphased square ref-based \
+  --out LD_matrix/${prefix}_LD
