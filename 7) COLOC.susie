@@ -1,0 +1,305 @@
+library(data.table)
+library(coloc)
+library(susieR)
+
+rm(list = ls())
+
+#---------------------------
+# Parameters
+#---------------------------
+my_window <- 250000 
+p_sig_thresh <- 0.001
+
+N_eqtl <- 31684
+s_sle  <- 0.27
+
+#---------------------------
+# FILES
+#---------------------------
+eqtl_files <- list.files("eqtlgen", pattern = "eqtl_.*_B38\\.txt$", full.names = TRUE)
+gwas_files <- list.files("gwas_subset", pattern = "SLE_meta_eur_.*\\.txt$", full.names = TRUE)
+
+st3 <- fread("ST3_EUR_summary_stats.tsv")
+
+dir.create("results", showWarnings = FALSE)
+
+eqtl_files <- eqtl_files[!grepl("eqtl_NA", eqtl_files)]
+
+cat("Total eQTL files:", length(eqtl_files), "\n")
+
+#---------------------------
+# Helper functions
+#---------------------------
+
+extract_cs <- function(S, m, dataset_name, locus) {
+  cs <- susie_get_cs(S)
+  if (is.null(cs$cs)) return(NULL)
+
+  res_list <- list()
+
+  for (i in seq_along(cs$cs)) {
+    idx <- cs$cs[[i]]
+
+    dt <- data.table(
+      locus = locus,
+      dataset = dataset_name,
+      cs_id = paste0("CS", i),
+      snp = m$snp[idx],
+      position = m$position[idx],
+      pip = S$pip[idx]
+    )
+
+    best_idx <- idx[which.max(S$pip[idx])]
+
+    dt[, top_snp := m$snp[best_idx]]
+    dt[, top_pip := max(S$pip[idx])]
+
+    res_list[[i]] <- dt
+  }
+
+  rbindlist(res_list)
+}
+
+extract_coloc_snps <- function(res, locus) {
+  res_list <- list()
+
+  for (i in seq_len(nrow(res$summary))) {
+
+    colname <- paste0("SNP.PP.H4.row", i)
+    if (!colname %in% names(res$results)) next
+
+    df <- data.table(
+      locus = locus,
+      signal_pair = i,
+      snp = res$results$snp,
+      pp_h4 = res$results[[colname]]
+    )
+
+    df <- df[!is.na(pp_h4)][order(-pp_h4)]
+    df[, cum_pp := cumsum(pp_h4)]
+
+    cs95_idx <- which(df$cum_pp >= 0.95)[1]
+    df[, cs95 := FALSE]
+
+    if (!is.na(cs95_idx)) {
+      df[1:cs95_idx, cs95 := TRUE]
+    }
+
+    res_list[[i]] <- df
+  }
+
+  rbindlist(res_list)
+}
+
+#---------------------------
+# LOOP
+#---------------------------
+for (eqtl_file in eqtl_files) {
+
+  cat("\nProcessing:", eqtl_file, "\n")
+
+  success <- FALSE
+  method_used <- NA
+
+  eqtl <- fread(eqtl_file)
+
+  base <- sub("^eqtl_(.*)_B38\\.txt$", "\\1", basename(eqtl_file))
+  rsid_only <- sub("_.*", "", base)
+
+  gwas_match <- gwas_files[grepl(paste0("_", rsid_only, "\\.txt$"), gwas_files)]
+  if (length(gwas_match) != 1) next
+
+  sle <- fread(gwas_match)
+
+  locus <- st3[RSID == rsid_only]
+  if (nrow(locus) == 0) next
+
+  #---------------------------
+  # FORMAT
+  #---------------------------
+  sle2 <- sle[, .(
+    snp      = RSID,
+    chr      = Chr,
+    position = Pos,
+    A1       = A1,
+    A2       = A2,
+    freq     = freq_eur,
+    beta     = b_eur,
+    se       = se_eur,
+    p        = p_eur,
+    N        = N_eur
+  )]
+
+  eqtl2 <- eqtl[, .(
+    snp      = SNP,
+    chr      = Chr,
+    position = BP,
+    A1       = A1,
+    A2       = A2,
+    freq     = Freq,
+    beta     = b,
+    se       = SE,
+    p        = p
+  )]
+
+  sle2  <- unique(sle2,  by = "snp")
+  eqtl2 <- unique(eqtl2, by = "snp")
+
+  sle2  <- sle2[position >= locus$start & position <= locus$end]
+  eqtl2 <- eqtl2[position >= locus$start & position <= locus$end]
+
+  m <- merge(sle2, eqtl2, by = "snp", suffixes = c(".sle", ".eqtl"))
+  m <- m[chr.sle == chr.eqtl]
+
+  if (nrow(m) < 20) next
+
+  # remove palindromic
+  pal <- (m$A1.sle == "A" & m$A2.sle == "T") |
+         (m$A1.sle == "T" & m$A2.sle == "A") |
+         (m$A1.sle == "C" & m$A2.sle == "G") |
+         (m$A1.sle == "G" & m$A2.sle == "C")
+
+  m <- m[!pal]
+
+  # align alleles
+  direct  <- m$A1.sle == m$A1.eqtl & m$A2.sle == m$A2.eqtl
+  reverse <- m$A1.sle == m$A2.eqtl & m$A2.sle == m$A1.eqtl
+
+  m <- m[direct | reverse]
+
+  reverse <- m$A1.sle == m$A2.eqtl & m$A2.sle == m$A1.eqtl
+
+  m[reverse, `:=`(
+    beta.eqtl = -beta.eqtl,
+    A1.eqtl = A1.sle,
+    A2.eqtl = A2.sle
+  )]
+
+  m[, position := position.sle]
+
+  #---------------------------
+  # WINDOW
+  #---------------------------
+  lead_idx <- which.min(m$p.sle)
+  lead_pos <- m$position[lead_idx]
+
+  m <- m[position >= lead_pos - my_window &
+         position <= lead_pos + my_window]
+
+  m <- m[p.sle < p_sig_thresh | p.eqtl < p_sig_thresh]
+
+  if (nrow(m) < 20) next
+
+  #---------------------------
+  # CLEAN
+  #---------------------------
+  m <- m[
+    nchar(A1.sle) == 1 & nchar(A2.sle) == 1 &
+    nchar(A1.eqtl) == 1 & nchar(A2.eqtl) == 1
+  ]
+
+  #---------------------------
+  # MAF
+  #---------------------------
+  m[, MAF.sle  := pmin(freq.sle,  1 - freq.sle)]
+  m[, MAF.eqtl := pmin(freq.eqtl, 1 - freq.eqtl)]
+
+  #---------------------------
+  # FIX N (IMPORTANT)
+  #---------------------------
+  if (!("N" %in% names(m))) next
+  if (all(is.na(m$N))) next
+
+  N_sle <- max(m$N, na.rm = TRUE)
+
+  #---------------------------
+  # LD
+  #---------------------------
+  ld_file  <- paste0("LD_matrix/", base, "_LD.unphased.vcor1")
+  var_file <- paste0("LD_matrix/", base, "_LD.unphased.vcor1.vars")
+
+  if (!file.exists(ld_file)) next
+
+  ld <- as.matrix(read.table(ld_file))
+  ld_snps <- scan(var_file, what = "")
+
+  rownames(ld) <- ld_snps
+  colnames(ld) <- ld_snps
+
+  m <- m[snp %in% ld_snps]
+  m <- m[match(ld_snps, snp)]
+
+  keep <- !is.na(m$snp)
+  m <- m[keep]
+  ld <- ld[keep, keep]
+
+  if (!all(m$snp == rownames(ld))) next
+
+  #---------------------------
+  # DATASETS
+  #---------------------------
+  D1 <- list(
+    beta = m$beta.sle,
+    varbeta = m$se.sle^2,
+    snp = m$snp,
+    position = m$position,
+    type = "cc",
+    N = as.integer(N_sle),
+    s = s_sle,
+    MAF = m$MAF.sle,
+    LD = ld
+  )
+
+  D2 <- list(
+    beta = m$beta.eqtl,
+    varbeta = m$se.eqtl^2,
+    snp = m$snp,
+    position = m$position,
+    type = "quant",
+    N = N_eqtl,
+    MAF = m$MAF.eqtl,
+    LD = ld
+  )
+
+  #---------------------------
+  # RUN
+  #---------------------------
+  try({
+    S1 <- runsusie(D1)
+    S2 <- runsusie(D2)
+
+    res <- coloc.susie(S1, S2)
+
+    if (!is.null(res$summary)) {
+      success <- TRUE
+      method_used <- "default"
+    }
+  }, silent = TRUE)
+
+  if (!success) next
+
+  #---------------------------
+  # SAVE RESULTS
+  #---------------------------
+  locus_results <- list()
+
+  locus_results[["S1_cs"]] <- extract_cs(S1, m, "D1", base)
+  locus_results[["S2_cs"]] <- extract_cs(S2, m, "D2", base)
+
+  summary_dt <- as.data.table(res$summary)
+  summary_dt[, locus := base]
+
+  locus_results[["coloc_summary"]] <- summary_dt
+  locus_results[["coloc_snps"]] <- extract_coloc_snps(res, base)
+
+  locus_dt <- rbindlist(locus_results, fill = TRUE)
+  locus_dt[, method := method_used]
+
+  fwrite(locus_dt,
+         paste0("results/", base, "_full_results.txt"),
+         sep = "\t")
+
+  cat("Saved:", base, "\n")
+}
+
+cat("\nALL DONE\n")
