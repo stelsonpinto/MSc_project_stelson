@@ -1,0 +1,260 @@
+library(data.table)
+rm(list = ls())
+
+#---------------------------
+# Parameters
+#---------------------------
+my_window <- 250000 
+p_sig_thresh <- 0.001
+
+N_eqtl <- 31684        # example only
+s_sle  <- 0.27         # example only: proportion of SLE cases
+
+#---------------------------
+# FILES
+#---------------------------
+eqtl_files <- list.files("eqtlgen", pattern = "eqtl_.*_B38\\.txt$", full.names = TRUE)
+gwas_files <- list.files("gwas_subset", 
+                         pattern = "SLE_meta_eur_.*\\.txt$", 
+                         full.names = TRUE)
+
+st3 <- fread("ST3_EUR_summary_stats.tsv")
+
+dir.create("LD_ref_data", showWarnings = FALSE)
+
+# remove bad NA file if present
+eqtl_files <- eqtl_files[!grepl("eqtl_NA", eqtl_files)]
+
+cat("Number of eQTL files:", length(eqtl_files), "\n")
+cat("Number of GWAS files:", length(gwas_files), "\n")
+
+if (length(eqtl_files) == 0) stop("No eQTL files found")
+if (length(gwas_files) == 0) stop("No GWAS files found")
+
+#---------------------------
+# MAIN LOOP
+#---------------------------
+for (eqtl_file in eqtl_files) {
+
+  cat("\nProcessing:", eqtl_file, "\n")
+
+  eqtl <- fread(eqtl_file)
+
+  #---------------------------
+  # Extract rsID
+  #---------------------------
+  rsid <- sub("^eqtl_(.*)_B38\\.txt$", "\\1", basename(eqtl_file))
+
+  #---------------------------
+  # Match GWAS by rsID
+  #---------------------------
+  gwas_match <- gwas_files[grepl(paste0("_", rsid, "\\.txt$"), gwas_files)]
+
+  if (length(gwas_match) == 0) {
+    cat("No GWAS match for", rsid, "\n")
+    next
+  }
+
+  if (length(gwas_match) > 1) {
+    cat("Multiple GWAS matches for", rsid, "\n")
+    next
+  }
+
+  gwas_file <- gwas_match[1]
+  cat("Matched GWAS:", basename(gwas_file), "\n")
+
+  sle <- fread(gwas_file)
+
+  #---------------------------
+  # Get locus from ST3
+  #---------------------------
+  locus <- st3[RSID == rsid]
+
+  if (nrow(locus) == 0) {
+    cat("No locus found in ST3 for", rsid, "\n")
+    next
+  }
+
+  #---------------------------
+  # FORMAT
+  #---------------------------
+ sle2 <- sle[, .(
+    snp      = RSID,
+    chr      = Chr,
+    position = Pos,
+    A1       = A1,
+    A2       = A2,
+    freq     = freq_eur,
+    beta     = b_eur,
+    se       = se_eur,
+    p        = p_eur,
+    N        = N_eur
+  )]
+
+  eqtl2 <- eqtl[, .(
+    snp      = SNP,
+    chr      = Chr,
+    position = BP,
+    A1       = A1,
+    A2       = A2,
+    freq     = Freq,
+    beta     = b,
+    se       = SE,
+    p        = p
+  )]
+
+  sle2  <- unique(sle2,  by = "snp")
+  eqtl2 <- unique(eqtl2, by = "snp")
+
+  )
+]
+  #---------------------------
+  # REGION FILTER
+  #---------------------------
+  sle2  <- sle2[position >= locus$start & position <= locus$end]
+  eqtl2 <- eqtl2[position >= locus$start & position <= locus$end]
+
+  if (nrow(sle2) < 50) {
+    cat("Too few GWAS SNPs in region:", rsid, "\n")
+    next
+  }
+
+  #---------------------------
+  # MERGE (QC only)
+  #---------------------------
+  m <- merge(sle2, eqtl2, by = "snp", suffixes = c(".sle", ".eqtl"))
+m <- m[chr.sle == chr.eqtl]
+
+  if (nrow(m) < 20) {
+    cat("Too few SNPs after merge:", rsid, "\n")
+    next
+  }
+
+  #---------------------------
+  # REMOVE PALINDROMIC
+  #---------------------------
+  pal <- (m$A1.sle == "A" & m$A2.sle == "T") |
+         (m$A1.sle == "T" & m$A2.sle == "A") |
+         (m$A1.sle == "C" & m$A2.sle == "G") |
+         (m$A1.sle == "G" & m$A2.sle == "C")
+
+  m <- m[!pal]
+
+  #---------------------------
+  # ALIGN (QC only)
+  #---------------------------
+  direct  <- m$A1.sle == m$A1.eqtl & m$A2.sle == m$A2.eqtl
+  reverse <- m$A1.sle == m$A2.eqtl & m$A2.sle == m$A1.eqtl
+
+  m <- m[direct | reverse]
+
+  if (nrow(m) < 20) {
+    cat("Too few SNPs after alignment:", rsid, "\n")
+    next
+  }
+
+  reverse <- m$A1.sle == m$A2.eqtl & m$A2.sle == m$A1.eqtl
+
+  m[reverse, `:=`(
+    beta.eqtl = -beta.eqtl,
+    A1.eqtl = A1.sle,
+    A2.eqtl = A2.sle
+  )]
+
+  m[, position := position.sle]
+
+
+#---------------------------
+# Restrict to locus window (IMPORTANT)
+#---------------------------
+
+# pick lead SNP from eQTL (or SLE)
+lead_idx <- which.min(m$p.sle)
+lead_pos <- m$position[lead_idx]
+
+# define window (e.g. ±250kb)
+window <- my_window
+
+# subset
+m <- m[
+  position >= lead_pos - window &
+    position <= lead_pos + window
+]
+
+#---------------------------
+# Keep informative SNPs (ADD HERE)
+#---------------------------
+m <- m[p.sle < p_sig_thresh | p.eqtl < p_sig_thresh]
+
+
+cat("Number of SNPs after windowing:", nrow(m), "\n")
+
+  #---------------------------
+  # Clean SNPs
+  #---------------------------
+  m <- m[
+    nchar(A1.sle) == 1 & nchar(A2.sle) == 1 &
+    nchar(A1.eqtl) == 1 & nchar(A2.eqtl) == 1 &
+    A1.sle %in% c("A","C","G","T") &
+    A2.sle %in% c("A","C","G","T") &
+    A1.eqtl %in% c("A","C","G","T") &
+    A2.eqtl %in% c("A","C","G","T")
+  ]
+
+  #---------------------------
+  # MAF
+  #---------------------------
+  m[, MAF.sle  := pmin(freq.sle,  1 - freq.sle)]
+  m[, MAF.eqtl := pmin(freq.eqtl, 1 - freq.eqtl)]
+
+  if (!("N" %in% names(m)) || length(unique(m$N)) != 1) {
+    cat("Skipping:", rs, ensg_id, "- bad N\n")
+    next
+  }
+
+  N_sle <- unique(m$N)
+
+
+#---------------------------
+# LD SNP SET (FULL REGION)
+#---------------------------
+region_snps <- unique(sle2$snp)
+
+  #---------------------------
+  # WRITE LD INPUT FILES
+  #---------------------------
+  prefix <- paste0("LD_ref_data/", rsid)
+
+  # SNP list
+  write.table(
+    region_snps,
+    paste0(prefix, "_snps.txt"),
+    row.names = FALSE,
+    col.names = FALSE,
+    quote = FALSE
+  )
+
+  # Allele file (allele first, SNP second)
+allele_dt <- sle2[snp %in% region_snps][match(region_snps, snp), .(A1, snp)]
+
+  write.table(
+    allele_dt[, .(A1, snp)],
+    paste0(prefix, "_alleles.txt"),
+    row.names = FALSE,
+    col.names = FALSE,
+    quote = FALSE
+  )
+
+  #---------------------------
+  # DEBUG
+  #---------------------------
+  lead_snp <- sle2$snp[which.min(sle2$p)]
+
+  cat("Lead SNP:", lead_snp, "\n")
+  cat("Min GWAS p:", min(sle2$p, na.rm = TRUE), "\n")
+  cat("Total region SNPs:", length(region_snps), "\n")
+
+  cat("LD files written for", rsid, "\n")
+}
+
+cat("\nAll LD input files created\n")
