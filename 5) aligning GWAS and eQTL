@@ -8,7 +8,7 @@ my_window <- 250000
 p_sig_thresh <- 0.001
 
 N_eqtl <- 31684
-s_sle  <- 0.27
+N_sle  <- 25333
 
 #---------------------------
 # FILES
@@ -22,7 +22,6 @@ st3 <- fread("ST3_EUR_summary_stats.tsv")
 
 dir.create("LD_ref_data", showWarnings = FALSE)
 
-# remove bad NA file if present
 eqtl_files <- eqtl_files[!grepl("eqtl_NA", eqtl_files)]
 
 cat("Number of eQTL files:", length(eqtl_files), "\n")
@@ -41,19 +40,18 @@ for (eqtl_file in eqtl_files) {
   eqtl <- fread(eqtl_file)
 
   #---------------------------
-  # Extract rsID ONLY (FIXED)
+  # Extract rsID
   #---------------------------
-  file_base <- basename(eqtl_file)
+  rsid <- sub("^eqtl_(rs[0-9]+)_.*$", "\\1", basename(eqtl_file))
 
-  rsid <- sub("^eqtl_(rs[0-9]+)_.*$", "\\1", file_base)
-  gene <- sub("^eqtl_rs[0-9]+_(ENSG[0-9]+)_.*$", "\\1", file_base)
-
-  cat("Extracted rsid:", rsid, "| gene:", gene, "\n")
+  cat("Extracted rsid:", rsid, "\n")
 
   #---------------------------
-  # Match GWAS (ROBUST)
+  # Match GWAS (FIXED)
   #---------------------------
-  gwas_match <- gwas_files[grepl(rsid, gwas_files)]
+  gwas_match <- gwas_files[
+    grepl(paste0("_", rsid, "\\.txt$"), gwas_files)
+  ]
 
   if (length(gwas_match) == 0) {
     cat("No GWAS match for", rsid, "\n")
@@ -71,7 +69,7 @@ for (eqtl_file in eqtl_files) {
   sle <- fread(gwas_file)
 
   #---------------------------
-  # Get locus from ST3
+  # Get locus
   #---------------------------
   locus <- st3[RSID == rsid]
 
@@ -92,8 +90,7 @@ for (eqtl_file in eqtl_files) {
     freq     = freq_eur,
     beta     = b_eur,
     se       = se_eur,
-    p        = p_eur,
-    N        = N_eur
+    p        = p_eur
   )]
 
   eqtl2 <- eqtl[, .(
@@ -136,38 +133,40 @@ for (eqtl_file in eqtl_files) {
   #---------------------------
   # REMOVE PALINDROMIC
   #---------------------------
-  pal <- (m$A1.sle == "A" & m$A2.sle == "T") |
-         (m$A1.sle == "T" & m$A2.sle == "A") |
-         (m$A1.sle == "C" & m$A2.sle == "G") |
-         (m$A1.sle == "G" & m$A2.sle == "C")
-
-  m <- m[!pal]
+  m <- m[!(
+    (A1.sle == "A" & A2.sle == "T") |
+    (A1.sle == "T" & A2.sle == "A") |
+    (A1.sle == "C" & A2.sle == "G") |
+    (A1.sle == "G" & A2.sle == "C")
+  )]
 
   #---------------------------
-  # ALIGN
+  # ALIGN (FIXED)
   #---------------------------
-  direct  <- m$A1.sle == m$A1.eqtl & m$A2.sle == m$A2.eqtl
-  reverse <- m$A1.sle == m$A2.eqtl & m$A2.sle == m$A1.eqtl
-
-  m <- m[direct | reverse]
+  m <- m[
+    (A1.sle == A1.eqtl & A2.sle == A2.eqtl) |
+    (A1.sle == A2.eqtl & A2.sle == A1.eqtl)
+  ]
 
   if (nrow(m) < 20) {
     cat("Too few SNPs after alignment:", rsid, "\n")
     next
   }
 
-  reverse <- m$A1.sle == m$A2.eqtl & m$A2.sle == m$A1.eqtl
-
-  m[reverse, `:=`(
-    beta.eqtl = -beta.eqtl,
-    A1.eqtl = A1.sle,
-    A2.eqtl = A2.sle
-  )]
+  # flip effect where needed (FIXED)
+  m[
+    A1.sle == A2.eqtl & A2.sle == A1.eqtl,
+    `:=`(
+      beta.eqtl = -beta.eqtl,
+      A1.eqtl = A1.sle,
+      A2.eqtl = A2.sle
+    )
+  ]
 
   m[, position := position.sle]
 
   #---------------------------
-  # WINDOW AROUND LEAD SNP
+  # WINDOW
   #---------------------------
   lead_idx <- which.min(m$p.sle)
   lead_pos <- m$position[lead_idx]
@@ -178,7 +177,7 @@ for (eqtl_file in eqtl_files) {
   ]
 
   #---------------------------
-  # SIGNIFICANT SNP FILTER
+  # SIGNIFICANT FILTER
   #---------------------------
   m <- m[
     (!is.na(p.sle)  & p.sle  < p_sig_thresh) |
@@ -210,13 +209,10 @@ for (eqtl_file in eqtl_files) {
   m[, MAF.sle  := pmin(freq.sle,  1 - freq.sle)]
   m[, MAF.eqtl := pmin(freq.eqtl, 1 - freq.eqtl)]
 
-  #---------------------------
-  # CHECK N
-  #---------------------------
-  N_sle <- 2533
+  m[, N := N_sle]
 
   #---------------------------
-  # LD SNP SET
+  # LD FILES
   #---------------------------
   region_snps <- unique(m$snp)
 
@@ -225,37 +221,22 @@ for (eqtl_file in eqtl_files) {
     next
   }
 
-  #---------------------------
-  # WRITE LD FILES
-  #---------------------------
   prefix <- paste0("LD_ref_data/", rsid)
 
-  write.table(
-    region_snps,
-    paste0(prefix, "_snps.txt"),
-    row.names = FALSE,
-    col.names = FALSE,
-    quote = FALSE
-  )
+  write.table(region_snps,
+              paste0(prefix, "_snps.txt"),
+              row.names = FALSE,
+              col.names = FALSE,
+              quote = FALSE)
 
-  allele_dt <- sle2[snp %in% region_snps][match(region_snps, snp), .(A1, snp)]
+  allele_dt <- m[match(region_snps, snp), .(A1.sle, snp)]
+  setnames(allele_dt, "A1.sle", "A1")
 
-  write.table(
-    allele_dt,
-    paste0(prefix, "_alleles.txt"),
-    row.names = FALSE,
-    col.names = FALSE,
-    quote = FALSE
-  )
-
-  #---------------------------
-  # DEBUG
-  #---------------------------
-  lead_snp <- m$snp[which.min(m$p.sle)]
-
-  cat("Lead SNP:", lead_snp, "\n")
-  cat("Min GWAS p:", min(m$p.sle, na.rm = TRUE), "\n")
-  cat("Total region SNPs:", length(region_snps), "\n")
+  write.table(allele_dt,
+              paste0(prefix, "_alleles.txt"),
+              row.names = FALSE,
+              col.names = FALSE,
+              quote = FALSE)
 
   cat("LD files written for", rsid, "\n")
 }
