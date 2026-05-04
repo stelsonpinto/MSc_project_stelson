@@ -43,11 +43,10 @@ for (eqtl_file in eqtl_files) {
   # Extract rsID
   #---------------------------
   rsid <- sub("^eqtl_(rs[0-9]+)_.*$", "\\1", basename(eqtl_file))
-
   cat("Extracted rsid:", rsid, "\n")
 
   #---------------------------
-  # Match GWAS (FIXED)
+  # Match GWAS (fixed)
   #---------------------------
   gwas_match <- gwas_files[
     grepl(paste0("_", rsid, "\\.txt$"), gwas_files)
@@ -141,7 +140,7 @@ for (eqtl_file in eqtl_files) {
   )]
 
   #---------------------------
-  # ALIGN (FIXED)
+  # ALIGN (fixed)
   #---------------------------
   m <- m[
     (A1.sle == A1.eqtl & A2.sle == A2.eqtl) |
@@ -153,7 +152,6 @@ for (eqtl_file in eqtl_files) {
     next
   }
 
-  # flip effect where needed (FIXED)
   m[
     A1.sle == A2.eqtl & A2.sle == A1.eqtl,
     `:=`(
@@ -221,7 +219,10 @@ for (eqtl_file in eqtl_files) {
     next
   }
 
-  prefix <- paste0("LD_ref_data/", rsid)
+  prefix <- paste0(
+    "LD_ref_data/",
+    sub("\\.txt$", "", basename(eqtl_file))
+  )
 
   write.table(region_snps,
               paste0(prefix, "_snps.txt"),
@@ -238,5 +239,5 @@ for (eqtl_file in eqtl_files) {
               col.names = FALSE,
               quote = FALSE)
 
-  cat("LD files written for", rsid, "\n")
+  cat("LD files written for", basename(prefix), "\n")
 }
