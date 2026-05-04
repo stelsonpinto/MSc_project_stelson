@@ -16,28 +16,30 @@ awk 'NR>1 {print $2}' ST3_with_gene_names.tsv | sort -u | while read chr; do
 done
 
 
-# Step 2: run per locus
 awk 'NR>1 {print $1, $2, $7}' ST3_with_gene_names.tsv | while read rsid chr gene; do
 
   prefix=${rsid}_${gene}
 
-if [[ -f LD_ref_data/eqtl_${prefix}_B38_snps.txt && -f LD_ref_data/eqtl_${prefix}_B38_alleles.txt ]]; then
-  ...
-else
-  echo "Skipping ${prefix} (missing files)"
-fi
+  snp_file="LD_ref_data/eqtl_${prefix}_B38_snps.txt"
+  allele_file="LD_ref_data/eqtl_${prefix}_B38_alleles.txt"
 
-  plink2 \
-    --pfile chr_data/all_hg38_chr${chr}_EUR_ref_nodup vzs \
-    --extract LD_ref_data/$eqtl_{prefix}_B38_snps.txt \
-    --ref-allele force LD_ref_data/eqtl_${prefix}_B38_alleles.txt 2 1 \
-    --make-pgen vzs \
-    --out LD_matrix_prep/${prefix}_aligned
+  if [[ -f "$snp_file" && -f "$allele_file" ]]; then
+
+    ./plink2 \
+      --pfile chr_data/all_hg38_chr${chr}_EUR_ref_nodup vzs \
+      --extract "$snp_file" \
+      --ref-allele force "$allele_file" 2 1 \
+      --make-pgen vzs \
+      --out LD_matrix_prep/${prefix}_aligned
+
+    ./plink2 \
+      --pfile LD_matrix_prep/${prefix}_aligned vzs \
+      --maf 0.02 \
+      --r-unphased square ref-based \
+      --out LD_matrix/${prefix}_LD
+
+  else
+    echo "Skipping ${prefix} (missing files)"
+  fi
 
 done
-
-./plink2 \
-  --pfile LD_matrix_prep/${prefix}_aligned vzs \
-  --maf 0.02 \
-  --r-unphased square ref-based \
-  --out LD_matrix/${prefix}_LD
