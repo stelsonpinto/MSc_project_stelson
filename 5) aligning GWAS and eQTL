@@ -7,13 +7,13 @@ rm(list = ls())
 my_window <- 250000 
 p_sig_thresh <- 0.001
 
-N_eqtl <- 31684        # example only
-s_sle  <- 0.27         # example only: proportion of SLE cases
+N_eqtl <- 31684
+s_sle  <- 0.27
 
 #---------------------------
 # FILES
 #---------------------------
-eqtl_files <- list.files("eqtlgen", pattern = "eqtl_.*_B38\\.txt$", full.names = TRUE)
+eqtl_files <- list.files("eqtlgen_B38", pattern = "eqtl_.*_B38\\.txt$", full.names = TRUE)
 gwas_files <- list.files("gwas_subset", 
                          pattern = "SLE_meta_eur_.*\\.txt$", 
                          full.names = TRUE)
@@ -41,14 +41,19 @@ for (eqtl_file in eqtl_files) {
   eqtl <- fread(eqtl_file)
 
   #---------------------------
-  # Extract rsID
+  # Extract rsID ONLY (FIXED)
   #---------------------------
-  rsid <- sub("^eqtl_(.*)_B38\\.txt$", "\\1", basename(eqtl_file))
+  file_base <- basename(eqtl_file)
+
+  rsid <- sub("^eqtl_(rs[0-9]+)_.*$", "\\1", file_base)
+  gene <- sub("^eqtl_rs[0-9]+_(ENSG[0-9]+)_.*$", "\\1", file_base)
+
+  cat("Extracted rsid:", rsid, "| gene:", gene, "\n")
 
   #---------------------------
-  # Match GWAS by rsID
+  # Match GWAS (ROBUST)
   #---------------------------
-  gwas_match <- gwas_files[grepl(paste0("_", rsid, "\\.txt$"), gwas_files)]
+  gwas_match <- gwas_files[grepl(rsid, gwas_files)]
 
   if (length(gwas_match) == 0) {
     cat("No GWAS match for", rsid, "\n")
@@ -78,7 +83,7 @@ for (eqtl_file in eqtl_files) {
   #---------------------------
   # FORMAT
   #---------------------------
- sle2 <- sle[, .(
+  sle2 <- sle[, .(
     snp      = RSID,
     chr      = Chr,
     position = Pos,
@@ -106,8 +111,6 @@ for (eqtl_file in eqtl_files) {
   sle2  <- unique(sle2,  by = "snp")
   eqtl2 <- unique(eqtl2, by = "snp")
 
-  )
-]
   #---------------------------
   # REGION FILTER
   #---------------------------
@@ -120,10 +123,10 @@ for (eqtl_file in eqtl_files) {
   }
 
   #---------------------------
-  # MERGE (QC only)
+  # MERGE
   #---------------------------
   m <- merge(sle2, eqtl2, by = "snp", suffixes = c(".sle", ".eqtl"))
-m <- m[chr.sle == chr.eqtl]
+  m <- m[chr.sle == chr.eqtl]
 
   if (nrow(m) < 20) {
     cat("Too few SNPs after merge:", rsid, "\n")
@@ -141,7 +144,7 @@ m <- m[chr.sle == chr.eqtl]
   m <- m[!pal]
 
   #---------------------------
-  # ALIGN (QC only)
+  # ALIGN
   #---------------------------
   direct  <- m$A1.sle == m$A1.eqtl & m$A2.sle == m$A2.eqtl
   reverse <- m$A1.sle == m$A2.eqtl & m$A2.sle == m$A1.eqtl
@@ -163,34 +166,34 @@ m <- m[chr.sle == chr.eqtl]
 
   m[, position := position.sle]
 
+  #---------------------------
+  # WINDOW AROUND LEAD SNP
+  #---------------------------
+  lead_idx <- which.min(m$p.sle)
+  lead_pos <- m$position[lead_idx]
 
-#---------------------------
-# Restrict to locus window (IMPORTANT)
-#---------------------------
-
-# pick lead SNP from eQTL (or SLE)
-lead_idx <- which.min(m$p.sle)
-lead_pos <- m$position[lead_idx]
-
-# define window (e.g. ±250kb)
-window <- my_window
-
-# subset
-m <- m[
-  position >= lead_pos - window &
-    position <= lead_pos + window
-]
-
-#---------------------------
-# Keep informative SNPs (ADD HERE)
-#---------------------------
-m <- m[p.sle < p_sig_thresh | p.eqtl < p_sig_thresh]
-
-
-cat("Number of SNPs after windowing:", nrow(m), "\n")
+  m <- m[
+    position >= lead_pos - my_window &
+    position <= lead_pos + my_window
+  ]
 
   #---------------------------
-  # Clean SNPs
+  # SIGNIFICANT SNP FILTER
+  #---------------------------
+  m <- m[
+    (!is.na(p.sle)  & p.sle  < p_sig_thresh) |
+    (!is.na(p.eqtl) & p.eqtl < p_sig_thresh)
+  ]
+
+  cat("Number of SNPs after windowing:", nrow(m), "\n")
+
+  if (nrow(m) < 10) {
+    cat("Too few SNPs after filtering:", rsid, "\n")
+    next
+  }
+
+  #---------------------------
+  # CLEAN SNPs
   #---------------------------
   m <- m[
     nchar(A1.sle) == 1 & nchar(A2.sle) == 1 &
@@ -207,25 +210,31 @@ cat("Number of SNPs after windowing:", nrow(m), "\n")
   m[, MAF.sle  := pmin(freq.sle,  1 - freq.sle)]
   m[, MAF.eqtl := pmin(freq.eqtl, 1 - freq.eqtl)]
 
-  if (!("N" %in% names(m)) || length(unique(m$N)) != 1) {
-    cat("Skipping:", rs, ensg_id, "- bad N\n")
+  #---------------------------
+  # CHECK N
+  #---------------------------
+  if (!("N.sle" %in% names(m)) || length(unique(m$N.sle)) != 1) {
+    cat("Skipping:", rsid, "- bad N\n")
     next
   }
 
-  N_sle <- unique(m$N)
-
-
-#---------------------------
-# LD SNP SET (FULL REGION)
-#---------------------------
-region_snps <- unique(sle2$snp)
+  N_sle <- unique(m$N.sle)
 
   #---------------------------
-  # WRITE LD INPUT FILES
+  # LD SNP SET
+  #---------------------------
+  region_snps <- unique(m$snp)
+
+  if (length(region_snps) == 0) {
+    cat("No SNPs for LD:", rsid, "\n")
+    next
+  }
+
+  #---------------------------
+  # WRITE LD FILES
   #---------------------------
   prefix <- paste0("LD_ref_data/", rsid)
 
-  # SNP list
   write.table(
     region_snps,
     paste0(prefix, "_snps.txt"),
@@ -234,11 +243,10 @@ region_snps <- unique(sle2$snp)
     quote = FALSE
   )
 
-  # Allele file (allele first, SNP second)
-allele_dt <- sle2[snp %in% region_snps][match(region_snps, snp), .(A1, snp)]
+  allele_dt <- sle2[snp %in% region_snps][match(region_snps, snp), .(A1, snp)]
 
   write.table(
-    allele_dt[, .(A1, snp)],
+    allele_dt,
     paste0(prefix, "_alleles.txt"),
     row.names = FALSE,
     col.names = FALSE,
@@ -248,13 +256,11 @@ allele_dt <- sle2[snp %in% region_snps][match(region_snps, snp), .(A1, snp)]
   #---------------------------
   # DEBUG
   #---------------------------
-  lead_snp <- sle2$snp[which.min(sle2$p)]
+  lead_snp <- m$snp[which.min(m$p.sle)]
 
   cat("Lead SNP:", lead_snp, "\n")
-  cat("Min GWAS p:", min(sle2$p, na.rm = TRUE), "\n")
+  cat("Min GWAS p:", min(m$p.sle, na.rm = TRUE), "\n")
   cat("Total region SNPs:", length(region_snps), "\n")
 
   cat("LD files written for", rsid, "\n")
 }
-
-cat("\nAll LD input files created\n")
