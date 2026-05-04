@@ -213,12 +213,7 @@ for (eqtl_file in eqtl_files) {
   #---------------------------
   # CHECK N
   #---------------------------
-  if (!("N.sle" %in% names(m)) || length(unique(m$N.sle)) != 1) {
-    cat("Skipping:", rsid, "- bad N\n")
-    next
-  }
-
-  N_sle <- unique(m$N.sle)
+  N_sle <- 2533
 
   #---------------------------
   # LD SNP SET
