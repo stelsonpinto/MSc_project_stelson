@@ -9,7 +9,7 @@ mkdir -p eqtlgen
 
 tail -n +2 ST3_with_gene_names.tsv | while IFS=$'\t' read RSID chr pos start end gene_symbol gene_id; do
 
-  window=500000   # 500 kb
+  window=1000000   # 1Mb
 
   start_bp=$((pos - window))
   end_bp=$((pos + window))
