@@ -1,3 +1,11 @@
+#!/bin/bash
+#SBATCH --job-name=liftover_plink
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=12:00:00
+#SBATCH --output=logs/liftover_%j.out
+
+
 mkdir -p LD_matrix_prep
 mkdir -p LD_matrix
 Module load plink2
