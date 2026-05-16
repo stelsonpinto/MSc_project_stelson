@@ -1,13 +1,94 @@
-GWAS data:
+# Data and Software Sources
 
-eQTLgen data:
-SMR-formatted cis-eQTLs from eQTLgen.org 
+##  GWAS Data
 
-LD data:
-1000 genome reference 
-fasta file
+### COVID-19 GWAS
+COVID-19 Host Genetics Initiative (HGI) Release 7 summary statistics:
+A2_ALL_all_leave_23andme
+A2_ALL_eas_leave_23andme
+A2_ALL_eur_leave_23andme
 
-smr
+https://www.covid19hg.org/results/r7/
 
-plink
+Genome build: GRCh38
 
+Traits used:
+Very severe respiratory confirmed covid vs. population
+
+
+### SLE GWAS
+- study name
+- PMID
+- ancestry
+- actual source
+
+Genome build: GRCh38
+
+
+## eQTL Data
+
+### eQTLGen cis-eQTL data
+SMR-formatted cis-eQTL summary statistics downloaded from:
+https://www.eqtlgen.org/
+
+SMR resource:
+https://yanglab.westlake.edu.cn/software/smr/#DataResource
+
+Genome build: GRCh37 (liftovered to GRCh38)
+
+
+## LD Reference Data
+
+### 1000 Genomes Project reference panel
+1000 Genomes Project GRCh38 reference panel used for LD calculations.
+
+Population subsets:
+- EUR
+- EAS
+
+Genome build: GRCh37 (liftovered to GRCh38)
+
+### Reference genome FASTA
+GRCh38 full analysis set plus decoy HLA FASTA file.
+
+Used for:
+- liftover validation
+- genome coordinate consistency
+(if applicable)
+
+## Software
+
+### PLINK2
+https://www.cog-genomics.org/plink/2.0/
+
+Used for:
+- LD matrix computation
+- genotype extraction
+- allele harmonisation
+- reference panel generation
+
+Version:
+PLINK v1.9 (date)
+PLINK v2.0.0-a.7LM (11 Mar 2026)
+
+
+### SMR
+https://yanglab.westlake.edu.cn/software/smr/
+
+Used for:
+- handling SMR-formatted eQTL data
+
+Version:
+smr-1.4.0
+
+## R Packages
+
+Main packages:
+- coloc
+- susieR
+- data.table
+- dplyr
+
+Full package versions provided in:
+- sessionInfo.txt
+- environment.yml
