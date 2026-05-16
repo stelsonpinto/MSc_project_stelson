@@ -1,19 +1,7 @@
 mkdir -p LD_matrix_prep
-mkdir -p chr_data
 mkdir -p LD_matrix
 Module load plink2
 
-# Step 1: create chromosome datasets
-awk 'NR>1 {print $2}' ST3_with_gene_names.tsv | sort -u | while read chr; do
-
-  plink2 \
-    --pfile all_hg38_EUR_ref_nodup vzs \
-    --chr ${chr} \
-    --allow-extra-chr \
-    --make-pgen vzs \
-    --out chr_data/all_hg38_chr${chr}_EUR_ref_nodup
-
-done
 
 awk 'NR>1 {print $1, $2, $7}' ST3_with_gene_names.tsv | while read rsid chr gene; do
 
