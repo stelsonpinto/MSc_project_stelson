@@ -17,7 +17,7 @@ Ancestry-specific LD reference panels were generated using 1000 Genomes Project 
 
 bash 01_extract_loci.sh - extracts lead SNP and locus files used throughout the analysis.
 Rscript 02_extract_gwas_loci.R - Extracts GWAS variants within the specified genomic windows
-bash 03_extract_eqtlgen.sh - Extracts matching cis-eQTL regions from eQTLGen SMR-formatted data.
+bash 03_extracting_eQTLgen_region.sh - Extracts matching cis-eQTL regions from eQTLGen SMR-formatted data.
 Rscript 04_liftover_eqtl.R - Converts genomic coordinates to GRCh38 where required. 
 Rscript 05_align_gwas_eqtl.R - Aligns alleles and matches variants between GWAS and eQTL datasets and saves SNP list and ref allele list for LD matrix.
 bash 06_create_ld_reference.sh - Generates EUR and EAS LD reference datasets from 1000 Genomes Project samples. 
