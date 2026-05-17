@@ -1,0 +1,179 @@
+locus	lead_snp	nsnps	PPH4	status	error
+rs61759532	rs61759532			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs61759532_LD.unphased.vcor1
+rs1848486	rs1848486	78		SUCCESS	
+rs56023922	rs56023922	151		SUCCESS	
+rs2309756	rs2309756			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs2309756_LD.unphased.vcor1
+rs10489845	rs10489845	39		SUCCESS	
+rs4282898	rs4282898	158		SUCCESS	
+rs12642710	rs12642710	86		SUCCESS	
+rs10411830	rs10411830			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs10411830_LD.unphased.vcor1
+rs7902904	rs7902904	102		SUCCESS	
+rs9670479	rs9670479	269		SUCCESS	
+rs12274090	rs12274090	76		SUCCESS	
+rs548234	rs548234			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs548234_LD.unphased.vcor1
+rs2206255	rs2206255			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs2206255_LD.unphased.vcor1
+rs11065979	rs11065979			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs11065979_LD.unphased.vcor1
+rs3757247	rs3757247			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs3757247_LD.unphased.vcor1
+rs13136297	rs13136297			FAILED	Too few SNPs after filtering
+rs7072811	rs7072811	118		SUCCESS	
+rs72736584	rs72736584	24		SUCCESS	
+rs75543804	rs75543804			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs75543804_LD.unphased.vcor1
+rs2736332	rs2736332	145		SUCCESS	
+rs78382932	rs78382932	320		SUCCESS	
+rs72730583	rs72730583	110		SUCCESS	
+rs229527	rs229527			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs229527_LD.unphased.vcor1
+rs4853373	rs4853373			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs4853373_LD.unphased.vcor1
+rs6510917	rs6510917			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs6510917_LD.unphased.vcor1
+rs6602587	rs6602587			FAILED	Too few SNPs after filtering
+rs4722276	rs4722276			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs4722276_LD.unphased.vcor1
+rs756880	rs756880			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs756880_LD.unphased.vcor1
+rs223886	rs223886			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs223886_LD.unphased.vcor1
+rs10848975	rs10848975	26		SUCCESS	
+rs1788098	rs1788098			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs1788098_LD.unphased.vcor1
+rs4810485	rs4810485			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs4810485_LD.unphased.vcor1
+rs74405933	rs74405933			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs74405933_LD.unphased.vcor1
+rs888096	rs888096			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs888096_LD.unphased.vcor1
+rs10823829	rs10823829			FAILED	Too few SNPs after filtering
+rs3886536	rs3886536			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs3886536_LD.unphased.vcor1
+rs7519758	rs7519758	46	5.8981688536086e-06	SUCCESS	
+rs12917656	rs12917656			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs12917656_LD.unphased.vcor1
+rs6831973	rs6831973	68		SUCCESS	
+rs170934	rs170934	45		SUCCESS	
+rs28475641	rs28475641	165		SUCCESS	
+rs3795982	rs3795982			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs3795982_LD.unphased.vcor1
+rs3087243	rs3087243			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs3087243_LD.unphased.vcor1
+rs61150131	rs61150131	479		SUCCESS	
+rs7252748	rs7252748			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs7252748_LD.unphased.vcor1
+rs146788138	rs146788138			FAILED	Too few SNPs after filtering
+rs111344337	rs111344337	30		SUCCESS	
+rs591549	rs591549			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs591549_LD.unphased.vcor1
+rs76201203	rs76201203	27		SUCCESS	
+rs12319783	rs12319783	181		SUCCESS	
+rs6942325	rs6942325			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs6942325_LD.unphased.vcor1
+rs2319516	rs2319516	34		SUCCESS	
+rs4812068	rs4812068			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs4812068_LD.unphased.vcor1
+rs16882521	rs16882521			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs16882521_LD.unphased.vcor1
+rs9532692	rs9532692	64	0.0474133656689831	SUCCESS	
+rs8103622	rs8103622			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs8103622_LD.unphased.vcor1
+rs61909064	rs61909064	224		SUCCESS	
+rs34051876	rs34051876	106		SUCCESS	
+rs2544920	rs2544920	258		SUCCESS	
+rs113877763	rs113877763	27		SUCCESS	
+rs2111485	rs2111485			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs2111485_LD.unphased.vcor1
+rs418215	rs418215			FAILED	Too few SNPs after filtering
+rs73011567	rs73011567	242	0.00876161251436612	SUCCESS	
+rs35346340	rs35346340			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs35346340_LD.unphased.vcor1
+rs7784748	rs7784748			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs7784748_LD.unphased.vcor1
+rs185149081	rs185149081			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs185149081_LD.unphased.vcor1
+rs2510066	rs2510066			FAILED	Too few SNPs after filtering
+rs542129885	rs542129885	123		SUCCESS	
+rs4542691	rs4542691			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs4542691_LD.unphased.vcor1
+rs77885959	rs77885959			FAILED	Too few SNPs after filtering
+rs8047421	rs8047421			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs8047421_LD.unphased.vcor1
+rs9268807	rs9268807			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs9268807_LD.unphased.vcor1
+rs776497260	rs776497260	278		SUCCESS	
+rs11064247	rs11064247	123		SUCCESS	
+rs76371569	rs76371569			FAILED	Too few SNPs after filtering
+rs2297550	rs2297550			FAILED	Too few SNPs after filtering
+rs62447171	rs62447171			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs62447171_LD.unphased.vcor1
+rs12694291	rs12694291			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs12694291_LD.unphased.vcor1
+rs113479772	rs113479772			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs113479772_LD.unphased.vcor1
+rs485499	rs485499			FAILED	Too few SNPs after filtering
+rs17129789	rs17129789	27		SUCCESS	
+rs7717955	rs7717955	53		SUCCESS	
+rs35465817	rs35465817	116		SUCCESS	
+rs790251	rs790251			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs790251_LD.unphased.vcor1
+rs1059702	rs1059702			FAILED	Missing SLE file: eas_gwas_sle/eas_rs1059702.txt
+rs3757387	rs3757387			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs3757387_LD.unphased.vcor1
+rs11649485	rs11649485			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs11649485_LD.unphased.vcor1
+rs1143679	rs1143679			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs1143679_LD.unphased.vcor1
+rs1887428	rs1887428	121		SUCCESS	
+rs6939565	rs6939565			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs6939565_LD.unphased.vcor1
+rs10173253	rs10173253			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs10173253_LD.unphased.vcor1
+rs4423942	rs4423942	103		SUCCESS	
+rs1400481	rs1400481	275		SUCCESS	
+rs7637844	rs7637844			FAILED	Too few SNPs after filtering
+rs9557227	rs9557227	110		SUCCESS	
+rs2426414	rs2426414			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs2426414_LD.unphased.vcor1
+rs741576	rs741576	176		SUCCESS	
+rs1635299	rs1635299			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs1635299_LD.unphased.vcor1
+rs11736377	rs11736377	90		SUCCESS	
+rs2374059	rs2374059	177		SUCCESS	
+rs1040029	rs1040029			FAILED	Too few SNPs after filtering
+rs2719231	rs2719231	99	0.00496036237326088	SUCCESS	
+rs9782955	rs9782955	87		SUCCESS	
+rs57319220	rs57319220	23		SUCCESS	
+rs3813582	rs3813582			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs3813582_LD.unphased.vcor1
+rs7626070	rs7626070	127		SUCCESS	
+rs309173	rs309173			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs309173_LD.unphased.vcor1
+rs77429014	rs77429014	81		SUCCESS	
+rs4954125	rs4954125			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs4954125_LD.unphased.vcor1
+rs2431697	rs2431697	63		SUCCESS	
+rs4287962	rs4287962	36		SUCCESS	
+rs1414273	rs1414273	47		SUCCESS	
+rs652284	rs652284	33		SUCCESS	
+rs17374162	rs17374162			FAILED	Too few SNPs after filtering
+rs60975870	rs60975870			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs60975870_LD.unphased.vcor1
+rs1317082	rs1317082	103		SUCCESS	
+rs375039649	rs375039649			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs375039649_LD.unphased.vcor1
+rs4483195	rs4483195	254		SUCCESS	
+rs12146097	rs12146097	345		SUCCESS	
+rs10896045	rs10896045	303		SUCCESS	
+rs5753605	rs5753605			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs5753605_LD.unphased.vcor1
+rs71336931	rs71336931			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs71336931_LD.unphased.vcor1
+rs2732549	rs2732549	51		SUCCESS	
+rs148490292	rs148490292			FAILED	Too few SNPs after filtering
+rs4963128	rs4963128	54		SUCCESS	
+rs3748233	rs3748233	20		SUCCESS	
+rs9712275	rs9712275			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs9712275_LD.unphased.vcor1
+rs4685426	rs4685426	135		SUCCESS	
+rs2841280	rs2841280	136		SUCCESS	
+rs774471019	rs774471019	78		SUCCESS	
+rs73068668	rs73068668			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs73068668_LD.unphased.vcor1
+rs7404928	rs7404928			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs7404928_LD.unphased.vcor1
+rs57441276	rs57441276			FAILED	Missing SLE file: eas_gwas_sle/eas_rs57441276.txt
+rs2476601	rs2476601	20		SUCCESS	
+rs2296618	rs2296618	29		SUCCESS	
+rs9437	rs9437	239		SUCCESS	
+rs8035957	rs8035957	147		SUCCESS	
+rs13385731	rs13385731			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs13385731_LD.unphased.vcor1
+rs301799	rs301799	77	0.0204335619351268	SUCCESS	
+rs2816316	rs2816316	69		SUCCESS	
+rs2046616	rs2046616	67		SUCCESS	
+rs74804869	rs74804869			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs74804869_LD.unphased.vcor1
+rs75967767	rs75967767	264		SUCCESS	
+rs12592504	rs12592504	28		SUCCESS	
+rs4801882	rs4801882			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs4801882_LD.unphased.vcor1
+rs202554	rs202554			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs202554_LD.unphased.vcor1
+rs923077	rs923077	171		SUCCESS	
+rs17116149	rs17116149	129		SUCCESS	
+rs268124	rs268124			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs268124_LD.unphased.vcor1
+rs4853459	rs4853459			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs4853459_LD.unphased.vcor1
+rs12576774	rs12576774	44	0.0580625534363801	SUCCESS	
+rs360050	rs360050	182		SUCCESS	
+rs428073	rs428073	68		SUCCESS	
+rs4388254	rs4388254	237		SUCCESS	
+rs755393386	rs755393386			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs755393386_LD.unphased.vcor1
+rs7725218	rs7725218	38		SUCCESS	
+rs6546883	rs6546883			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs6546883_LD.unphased.vcor1
+rs12636784	rs12636784	229		SUCCESS	
+rs2740174	rs2740174	44		SUCCESS	
+rs7749323	rs7749323			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs7749323_LD.unphased.vcor1
+rs10066380	rs10066380	22		SUCCESS	
+rs34562254	rs34562254			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs34562254_LD.unphased.vcor1
+rs2205960	rs2205960	346		SUCCESS	
+rs10036748	rs10036748	121		SUCCESS	
+rs7126711	rs7126711	151		SUCCESS	
+rs1482518599	rs1482518599	122		SUCCESS	
+rs12241531	rs12241531	212		SUCCESS	
+rs16826583	rs16826583	90		SUCCESS	
+rs62017246	rs62017246			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs62017246_LD.unphased.vcor1
+rs2234290	rs2234290	37		SUCCESS	
+rs34536443	rs34536443			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs34536443_LD.unphased.vcor1
+rs1893592	rs1893592			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs1893592_LD.unphased.vcor1
+rs3180408	rs3180408			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs3180408_LD.unphased.vcor1
+rs7097397	rs7097397	188		SUCCESS	
+rs2298428	rs2298428			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs2298428_LD.unphased.vcor1
+rs80295067	rs80295067			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs80295067_LD.unphased.vcor1
+rs2297239	rs2297239			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs2297239_LD.unphased.vcor1
+rs889561	rs889561			FAILED	Missing LD matrix: LD_matrix_EAS_sle_v_covid/COVID_meta_eas_rs889561_LD.unphased.vcor1
