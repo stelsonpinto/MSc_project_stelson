@@ -17,10 +17,16 @@ tail -n +2 ST3_with_gene_names.tsv | while IFS=$'\t' read RSID chr pos start end
   # Prevent negative coordinates
   if [ "$start_bp" -lt 0 ]; then
     start_bp=0
+
   fi
 
   from_kb=$((start_bp / 1000))
   to_kb=$((end_bp / 1000))
+  
+  # Convert chromosome 23 to X
+if [ "$chr" = "23" ]; then
+  chr="X"
+fi
 
   smr \
     --beqtl-summary cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense \
