@@ -49,6 +49,11 @@ GWAS_summary_stats <- read.delim(in_file, sep = "\t", stringsAsFactors = FALSE)
 
 GWAS_summary_stats$Chr <- toupper(as.character(GWAS_summary_stats$Chr))
 
+# Convert chromosome X labels to 23
+GWAS_summary_stats$Chr[
+  GWAS_summary_stats$Chr %in% c("X","CHRX","CHR23")
+] <- "23"
+
 if(!"Pos" %in% colnames(GWAS_summary_stats)){
   if("BP" %in% colnames(GWAS_summary_stats)){
     names(GWAS_summary_stats)[names(GWAS_summary_stats)=="BP"] <- "Pos"
@@ -81,6 +86,14 @@ st3 <- read.delim("ST3_EUR_summary_stats.tsv", stringsAsFactors = FALSE)
 
 st3 <- st3[, c("RSID","chr","start","end")]
 st3$chr <- as.character(st3$chr)
+
+st3$chr <- toupper(st3$chr)
+
+# Convert chromosome X labels to 23
+st3$chr[
+  st3$chr %in% c("X","CHRX","CHR23")
+] <- "23"
+
 st3 <- unique(st3)
 
 
