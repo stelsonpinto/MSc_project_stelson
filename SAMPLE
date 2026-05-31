@@ -4,3 +4,49 @@
 #meta  = 25333 + 274837 = 300170
 
 #sample sizses for covid
+
+A2_ALL_eur_leave_23andme = 
+
+Total Cases
+13769
+Total Controls
+1072442
+= 1086211
+
+A2_ALL_eas_leave_23andme = 
+
+Total Cases
+794
+Total Controls
+4862
+= 5656
+
+Contributing Studies for eur:
+Name	n_cases	n_controls
+ANCESTRY_Freeze_Four_EUR	667	113882
+Amsterdam_UMC_COVID_study_group_EUR	66	1413
+CU_EUR	203	2149
+FinnGen_FIN	190	278193
+GENCOVID_EUR	1077	2443
+GHS_Freeze_145_EUR	321	108168
+SPGRX_EUR	101	302
+Vanda_EUR	58	900
+idipaz24genetics_EUR	59	75
+BQC19_EUR	202	1366
+BelCovid_EUR	297	1477
+BioVU_EUR	117	68064
+BoSCO_EUR	195	984
+Charite_EUR	87	865
+HOSTAGE_EUR	1850	12226
+INMUNGEN_CoV2_EUR	81	723
+POLISH_COVID_WGS_EUR	224	1005
+SCOURGE_EUR	1124	13224
+SweCovid_EUR	181	3748
+UKBB_EUR	680	419851
+genomicc_EUR	5989	41384
+
+Contributing Studies for eas:
+Name	n_cases	n_controls
+JapanTaskForce_EAS = 421	3317
+genomicc_EAS = 274	352
+JSA-COVID19_EAS =	99	1193
