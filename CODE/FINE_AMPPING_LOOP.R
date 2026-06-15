@@ -127,7 +127,7 @@ for(i in seq_along(gwas_files)) {
       CS   = NA_character_
     )
     
-    # Assign credible set membership
+    #credible set
     if (!is.null(fit$sets$cs)) {
       
       for (j in seq_along(fit$sets$cs)) {
