@@ -17,10 +17,32 @@ Very severe respiratory confirmed covid vs. population
 
 
 ### SLE GWAS
-- study name
-- PMID
-- ancestry
-- actual source
+### European ancestry
+
+The European SLE GWAS comprised four contributing cohorts:
+
+| Cohort | Cases | Controls | Total N | Reference |
+
+| GENENTECH | 1,163 | 2,106 | 3,269 | PMID: 21362770 |
+| GWAS_WYSE | 4,036 | 6,959 | 10,995 | PMID: 26502338 |
+| SLE_EUR_GSA | 1,183 | 6,821 | 8,004 | Unpublished |
+| SLEGEN | 522 | 2,543 | 3,065 | PMID: 18204446 |
+
+Total: 6,904 cases, 18,429 controls (N = 25,333).
+
+### East Asian ancestry
+
+The East Asian SLE GWAS included 13 contributing cohorts from China, Hong Kong, Japan, South Korea and Thailand.
+
+Total: 18,212 cases, 256,625 controls (N = 274,837).
+
+### Trans-ancestry meta-analysis
+
+The combined SLE meta-analysis included:
+
+- Cases: 25,116
+- Controls: 275,054
+- Total N: 300,170
 
 Genome build: GRCh38
 
