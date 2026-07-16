@@ -1,0 +1,18 @@
+The analyses in this repository were performed using the following software.
+
+Software | Version
+
+R | 4.5.3 
+PLINK2 | v2.0.0-a.7 (11 Mar 2026)
+GCTA | v1.94.1
+METAL | 3/25/2011
+susieR | 0.14.2
+coloc | 5.2.3
+SMR | v1.4.2
+Ensembl VEP | Release 116 (web interface)
+RegulomeDB | v1.1
+HaploReg | v4.2
+AlphaGenome | Web platform (accessed 2026)
+LocusZoom | Web interface (accessed 2026)
+
+Additional R package versions are provided in `ENVIRONMENT/sessionInfo.txt`.
