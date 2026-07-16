@@ -19,4 +19,5 @@ FINE_MAPPING_LOOP.R | Run SuSiE fine-mapping across all loci.
 09_coloc_susie.R | Perform SuSiE fine-mapping and Bayesian colocalisation. 
 METAL FOR COVID META | Using METAL software to merge covid GWAS summary statistics of european and eas asian ancestry. 
 
+
 Detailed execution order and analysis workflow are provided in `docs/Pipeline_workflow`.
