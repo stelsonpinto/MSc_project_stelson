@@ -9,14 +9,9 @@
 #SBATCH --cpus-per-task=2
 
 # Initialize conda
-source /software/spackages_v0_21_prod/apps/linux-ubuntu22.04-zen2/gcc-13.2.0/anaconda3-2022.10-5wy43yh5crcsmws4afls5thwoskzarhe/etc/profile.d/conda.sh
-
 # Activate environment
 conda activate r_env
-
 # Go to working directory
-cd /scratch/users/k25106429/research_project/signals
-
 # Create output directory
 mkdir -p gwas_subset
 
@@ -149,44 +144,5 @@ for(i in seq_len(nrow(st3))){
   write.table(SLE_meta_for_database, file=out_file,
               sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
 
-  ############################
-  # PLOT (UNCHANGED)
-  ############################
-  p_col <- paste0("p_", my_study)
-
-  df <- SLE_meta_for_database
-
-  df[[p_col]] <- as.numeric(df[[p_col]])
-  df[[p_col]][is.na(df[[p_col]]) | df[[p_col]] <= 0] <- .Machine$double.xmin
-
-  df$logp <- -log10(df[[p_col]])
-  df$Pos  <- as.numeric(df$Pos)
-
-  top_i <- which.max(df$logp)
-  top_df <- df[top_i, , drop = FALSE]
-
-  mean_N <- round(mean(df[[paste0("N_", my_study)]], na.rm=TRUE), 0)
-
-  my_title <- paste0(
-    "Chr ", mychr, "  ", rsid, "  ", my_study,
-    " (N≈", format(mean_N, big.mark=","), ")"
-  )
-
-  gg <- ggplot(df, aes(x = Pos, y = logp)) +
-    geom_point(size = 0.9, alpha = 0.7) +
-    geom_hline(yintercept = -log10(5e-8), linetype = "dashed") +
-    labs(
-      title = my_title,
-      x = "Position (bp)",
-      y = expression(-log[10](p))
-    ) +
-    theme_bw()
-
-  gg <- gg +
-    geom_point(data = top_df, size = 1.4) +
-    geom_text(data = top_df, aes(label = RSID), vjust = -0.7, size = 3)
-
-  print(gg)
-}
 
 cat("All loci processed.\n")
